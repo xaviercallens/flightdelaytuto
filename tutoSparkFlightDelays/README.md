@@ -1,4 +1,4 @@
-# Tuto Spark FLight Delays
+# Tuto Spark Flight Delays
 
 If you are here, you are supposed to be login into Azure
 
