@@ -22,4 +22,4 @@ If you are here, you are supposed to be login into Azure
 
 5. Wait for the compute to start
 
-6. Go in Notebooks on the nav bar in the left and start a terminal, clone this repository and open the notebook in this folder to begin the tuto
+6. Go in Notebooks on the nav bar in the left and start a terminal, clone this repository and open the notebook 0 in this folder to begin the tuto
