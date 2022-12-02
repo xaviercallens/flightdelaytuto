@@ -2,42 +2,41 @@
   "cells": [
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "## PREDICTING FLIGHT DELAYS AT ARRIVAL"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "*Powered by the <span style=\"color:rgb(0,94,184)\">Data Science Platform and Romain*</span> <img src=\"images/logo-dsp-100x100.png\" style=\"vertical-align:middle\" width=\"25\" height=\"25\" />"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Level: <span style=\"color:green\">Beginner</span>"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Duration: *40 min*"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "## Introduction"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "The goal of this notebook is to to build, train and evaluate a Random Forest model in order to predict the flight delays at arrival of Southwest airline company (WN) at the Los Angeles international airport (LAX) in 2015. The purpose is not to obtain the best possible prediction but rather to emphasize on the various steps needed to build such a model.\n",
         "\n",
@@ -55,47 +54,41 @@
         "* Creating a component\n",
         "* Creating an environment with Dockerfile\n",
         "* Creating a Pipeline"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "<img src=\"images/global_free_trial_spark_delay.png\" width=\"700\" height=\"350\" />"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "## 1. Data analysis"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Before starting, we have to get a handle to our workspace"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": null,
-      "metadata": {},
-      "outputs": [],
       "source": [
         "%pip install azure-ai-ml"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 26,
-      "metadata": {
-        "gather": {
-          "logged": 1669884929005
-        }
-      },
-      "outputs": [],
       "source": [
         "# Authentication package\n",
         "from azure.identity import DefaultAzureCredential\n",
@@ -113,30 +106,26 @@
         "    resource_group_name= os.environ['resource_group'],\n",
         "    workspace_name= os.environ['workspace_name']\n",
         ")"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 26,
+      "metadata": {
+        "gather": {
+          "logged": 1669884929005
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "* Checking Credentials\n",
         "\n",
         "ml_client is lazy. So your credentials might be invalid. Run this cell to make sure your credentials are correct :"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 27,
-      "metadata": {},
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Credentials are valid\n"
-          ]
-        }
-      ],
       "source": [
         "# Check if credentials are valid\n",
         "from IPython.display import Image\n",
@@ -150,11 +139,19 @@
         "    display(Image(filename='images/credentials.PNG'))\n",
         "    print(\"You can find your credentials by clicking on the TOP LEFT of the Azure Portal ML Studio\")\n",
         "    display(Image(filename='images/values.png'))"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Credentials are valid\n"
+        }
+      ],
+      "execution_count": 27,
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "## Create a compute resource to run your job\n",
         "\n",
@@ -163,26 +160,11 @@
         "You'll provision a Linux compute cluster. See the [full list on VM sizes and prices](https://azure.microsoft.com/pricing/details/machine-learning/) .\n",
         "\n",
         "For this example, you only need a basic cluster, so you'll use a Standard_DS11_v2 model and create an Azure ML Compute."
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 44,
-      "metadata": {
-        "gather": {
-          "logged": 1669884933949
-        }
-      },
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "You already have a cluster named cpu-cluster-flights, we'll reuse it as is.\n",
-            "AMLCompute with name cpu-cluster-flights is created, the compute size is STANDARD_DS11_V2\n"
-          ]
-        }
-      ],
       "source": [
         "from azure.ai.ml.entities import AmlCompute\n",
         "\n",
@@ -224,18 +206,30 @@
         "print(\n",
         "    f\"AMLCompute with name {cpu_cluster.name} is created, the compute size is {cpu_cluster.size}\"\n",
         ")"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "You already have a cluster named cpu-cluster-flights, we'll reuse it as is.\nAMLCompute with name cpu-cluster-flights is created, the compute size is STANDARD_DS11_V2\n"
+        }
+      ],
+      "execution_count": 44,
+      "metadata": {
+        "gather": {
+          "logged": 1669884933949
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "### 1.1 Create Environnment for our execution/job"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "To run your AzureML job on your compute resource, you'll need an environment. An environment lists the software runtime and libraries that you want installed on the compute where you’ll be training. It's similar to your python environment on your local machine.\n",
         "\n",
@@ -244,44 +238,34 @@
         "In this example, you'll create a custom conda environment for your jobs, using a conda yaml file.\n",
         "\n",
         "First, create a directory to store the file in."
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 45,
-      "metadata": {
-        "gather": {
-          "logged": 1669799861825
-        }
-      },
-      "outputs": [],
       "source": [
         "import os\n",
         "\n",
         "env_dir = \"./env\"\n",
         "os.makedirs(env_dir, exist_ok=True)"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 45,
+      "metadata": {
+        "gather": {
+          "logged": 1669799861825
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Now, we create the Dockerfile where our pipeline will run"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 46,
-      "metadata": {},
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Overwriting ./env/Dockerfile\n"
-          ]
-        }
-      ],
       "source": [
         "%%writefile {env_dir}/Dockerfile\n",
         "FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20220902.v1\n",
@@ -351,41 +335,26 @@
         "    \n",
         "ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/\n",
         "RUN export JAVA_HOME\n"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Overwriting ./env/Dockerfile\n"
+        }
+      ],
+      "execution_count": 46,
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Now we use a job to register our environment into our workspace"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 20,
-      "metadata": {
-        "gather": {
-          "logged": 1669799887523
-        }
-      },
-      "outputs": [
-        {
-          "name": "stderr",
-          "output_type": "stream",
-          "text": [
-            "\u001b[32mUploading env (0.0 MBs): 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2799/2799 [00:00<00:00, 67010.99it/s]\u001b[0m\n",
-            "\u001b[39m\n",
-            "\n"
-          ]
-        },
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Environment with name flight-delays-custom-env is registered to workspace, the environment version is 12\n"
-          ]
-        }
-      ],
       "source": [
         "from azure.ai.ml.entities import Environment\n",
         "from azure.ai.ml.entities import BuildContext\n",
@@ -408,25 +377,36 @@
         "print(\n",
         "    f\"Environment with name {pipeline_job_env.name} is registered to workspace, the environment version is {pipeline_job_env.version}\"\n",
         ")"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "\u001b[32mUploading env (0.0 MBs): 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2799/2799 [00:00<00:00, 67010.99it/s]\u001b[0m\n\u001b[39m\n\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Environment with name flight-delays-custom-env is registered to workspace, the environment version is 12\n"
+        }
+      ],
+      "execution_count": 20,
+      "metadata": {
+        "gather": {
+          "logged": 1669799887523
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 1.2 Writing our component\n",
         "First of all, we are creating a yml file. This file will be a description of our azure ml component. It explains how this component works."
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 29,
-      "metadata": {
-        "gather": {
-          "logged": 1669800336891
-        }
-      },
-      "outputs": [],
       "source": [
         "import os\n",
         "\n",
@@ -435,31 +415,23 @@
         "\n",
         "analysis_src_dir = \"./components/src\"\n",
         "os.makedirs(analysis_src_dir, exist_ok=True)"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 2,
+      "metadata": {
+        "gather": {
+          "logged": 1669800336891
+        }
+      }
     },
     {
       "cell_type": "code",
-      "execution_count": 30,
-      "metadata": {
-        "gather": {
-          "logged": 1669192288076
-        }
-      },
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Overwriting ./components/flight_delays_analysis.yml\n"
-          ]
-        }
-      ],
       "source": [
         "%%writefile $component_dir/flight_delays_analysis.yml\n",
         "$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json\n",
         "name: analysis\n",
         "display_name: analysis\n",
-        "version: 30\n",
+        "version: 29\n",
         "type: command\n",
         "inputs:\n",
         "  public_data_flight_delays: \n",
@@ -473,28 +445,30 @@
         "  python analysis.py\n",
         "  --public_data_flight_delays ${{inputs.public_data_flight_delays}} \n",
         "  --eval_output ${{outputs.eval_output}}"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Overwriting ./components/flight_delays_analysis.yml\n"
+        }
+      ],
+      "execution_count": 9,
+      "metadata": {
+        "gather": {
+          "logged": 1669192288076
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Now we need to actually create the code that will be executed by our component"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 8,
-      "metadata": {},
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Writing ./components/src/analysis.py\n"
-          ]
-        }
-      ],
       "source": [
         "%%writefile {analysis_src_dir}/analysis.py\n",
         "import os\n",
@@ -678,57 +652,69 @@
         "\n",
         "if __name__ == \"__main__\":\n",
         "    main()"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Writing ./components/src/analysis.py\n"
+        }
+      ],
+      "execution_count": 8,
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
+      "source": [
+        "# 1.3 Creating our component with a command\n",
+        "Open a terminal\n",
+        "\n",
+        "<img src=\"images/openTerminal.PNG\" width=\"800\" height=\"600\" />\n",
+        "\n",
+        "Go into the right folder\n",
+        "```\n",
+        "$ cd flightdelaytuto/tutoAzureML/\n",
+        "```\n",
+        "Execute the setenv.py script\n",
+        "\n",
+        "```\n",
+        "$ run setenv.py\n",
+        "```\n",
+        "\n",
+        "```\n",
+        "$ cd components\n",
+        "```\n",
+        "\n",
+        "```\n",
+        "$ az login --tenant $tenant_id\n",
+        "```\n",
+        "\n",
+        "```\n",
+        "$ az configure --defaults workspace=<Azure Machine Learning workspace name> group=<resource group>\n",
+        "```\n",
+        "\n",
+        "\n",
+        "After you successfuly login, set the right subscription ID you are currently using in Microsoft Azure Machine learning Studio.\n",
+        "\n",
+        "\n",
+        "**az account set --subscription 8b5374c5-8b98-45fb-bd96-7d5a4ce4e527**\n",
+        "\n",
+        "You are now perfectly set up and can create a component with this command using your workspace-name and ressource-group :\n",
+        "\n",
+        "**az ml component create --file flight_delays_analysis.yml --workspace-name romain-mlbox --resource-group rg-sbx-aiops**\n",
+        "\n",
+        "It should display a JSON with informations of the component you just created"
+      ],
       "metadata": {
         "nteract": {
           "transient": {
             "deleting": false
           }
         }
-      },
-      "source": [
-        "# 1.3 Creating our component with a command\n",
-        "* Open a terminal\n",
-        "\n",
-        "<img src=\"images/openTerminal.PNG\" width=\"800\" height=\"600\" />\n",
-        "\n",
-        "* Go into the right folder\n",
-        "```\n",
-        "$ cd flightdelaytuto/tutoAzureML/\n",
-        "```\n",
-        "* Execute the setenv.sh script that will setup variables environment\n",
-        "```\n",
-        "$ source setenv.sh\n",
-        "```\n",
-        "* Go into the components folder \n",
-        "```\n",
-        "$ cd components\n",
-        "```\n",
-        "* Login Azure with this command\n",
-        "```\n",
-        "$ az login --tenant $tenant_id\n",
-        "```\n",
-        "* After you successfuly login, set the right subscription ID you are currently using in Microsoft Azure Machine learning Studio.\n",
-        "```\n",
-        "$ az account set --subscription $subscription_id\n",
-        "```\n",
-        "* Set your workspace and resource group\n",
-        "```\n",
-        "$ az configure --defaults workspace=$workspace_name group=$resource_group\n",
-        "```\n",
-        "* You are now perfectly set up and can create a component with this command with the .yml file that we created earlier :\n",
-        "```\n",
-        "$ az ml component create --file flight_delays_analysis.yml\n",
-        "```\n",
-        "* It should display a JSON with informations of the component you just created"
-      ]
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 1.4 Creating a pipeline with the designer tool\n",
         "\n",
@@ -748,30 +734,22 @@
         "\n",
         "Rename the pipeline with the name : **Analysis Delay Flights**\n",
         "\n",
-        "Go to settings and Select a Compute Cluster type and select : **cpu-cluster-flights** that we create earlier\n",
+        "Go to settings and Select a Compute Cluster type and select **cpu-cluster-flights** that we create earlier\n",
         "\n",
         "Your screen should look like this :\n",
         "\n",
         "<img src=\"images/designer_tool.PNG\" width=\"800\" height=\"390\" />\n",
         "\n",
-        "It is time to press Submit (Create a new experiment called ExperimentDelayFlight) to launch this pipeline for the first time\n",
+        "It is time to press Submit to launch this pipeline for the first time\n",
         "\n",
         "**Note that a .yml file can completely replace the design tool**\n",
         "\n",
-        "In the nav bar : Assets : Jobs on the left you should see your job running (30 seconds after the submit)\n",
+        "In Assets Jobs on the left you should see your job\n",
         "\n",
-        "Click on the Job and wait for the Job to finish running (It can take 5 up to 15 minutes to run ,installing environment on a node...)\n",
-        "\n",
-        "While waiting, you can start creating the second component in part 2\n",
-        "\n",
-        "When it is complete, click on the analysis component\n",
-        "Pipeline job overview is where you should see your pipeline running\n",
-        "\n",
-        "<img src=\"images/overview.PNG\" width=\"700\" height=\"600\" />\n",
+        "Pipeline job overview is where you should see your pipeline running. It can take 5 to 15 minutes to run (installing environment on a node...)\n",
         "\n",
         "**Important**\n",
-        "Whenever the job is complete, you can see a lot of informations in the component analysis that has finished.\n",
-        "On the top nav bar :\n",
+        "Whenever the job is complete, you can see a lot of informations in the component analysis that has finished :\n",
         "\n",
         "-Output + Logs = when you see the csv that has been generate by the pipeline and the output file\n",
         "\n",
@@ -780,18 +758,18 @@
         "* 31 columns\n",
         "\n",
         "-Images : Images that have been loaded during the execution"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "## 2 Model training: Single airport LAX, Single airline WN"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "The previsous sections dealt with an exploration of the dataset.  \n",
         "From here, we start with the modeling of flight delays. \n",
@@ -801,30 +779,20 @@
         "There is a high variability in average delays, both between the different airports but also between the different airlines. So, it is necessary to learn model that is specific to an airline the destination airport.\n",
         "\n",
         "We will learn model that predicts the flight delays at the destination airport at a given time of arrival (on January). We will work on Southwest Airlines (WN) flights arriving at the airport of Los Angeles International Airport (LAX). We will use the 3 first weeks of January as the training set and the follwoing week of January as the test set."
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 2.1 Training Component\n",
         "\n",
         "Now we create our second component which will create a model and train the model"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 6,
-      "metadata": {},
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Overwriting ./components/flight_delays_training.yml\n"
-          ]
-        }
-      ],
       "source": [
         "%%writefile $component_dir/flight_delays_training.yml\n",
         "$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json\n",
@@ -848,28 +816,26 @@
         "  --public_data_flight_delays ${{inputs.public_data_flight_delays}} \n",
         "  --num_trees ${{inputs.num_trees}}\n",
         "  --eval_output ${{outputs.eval_output}}"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Overwriting ./components/flight_delays_training.yml\n"
+        }
+      ],
+      "execution_count": 6,
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "Here is the code of our component"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 5,
-      "metadata": {},
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Overwriting ./components/src/train.py\n"
-          ]
-        }
-      ],
       "source": [
         "%%writefile {analysis_src_dir}/train.py\n",
         "import os\n",
@@ -1018,7 +984,8 @@
         "\n",
         "    mlflow.log_metric(\"mse\", mse)\n",
         "\n",
-        "    # 2.4 Model registry\n",
+        "    # 2.4 Model deployment\n",
+        "    #TODO: add model deployment code\n",
         "\n",
         "    # get the current run id\n",
         "    run_id = mlflow.active_run().info.run_id\n",
@@ -1039,64 +1006,58 @@
         "\n",
         "if __name__ == \"__main__\":\n",
         "    main()"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Overwriting ./components/src/train.py\n"
+        }
+      ],
+      "execution_count": 5,
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 2.2 Creating an other component with a command\n",
-        "* Open a terminal\n",
+        "Open a terminal in this folder\n",
         "\n",
-        "<img src=\"images/openTerminal.PNG\" width=\"800\" height=\"600\" />\n",
+        "**cd components**\n",
         "\n",
-        "* Go into the right folder\n",
-        "```\n",
-        "$ cd flightdelaytuto/tutoAzureML/\n",
-        "```\n",
-        "* Execute the setenv.sh script that will setup variables environment\n",
-        "```\n",
-        "$ source setenv.sh\n",
-        "```\n",
-        "* Go into the components folder \n",
-        "```\n",
-        "$ cd components\n",
-        "```\n",
-        "Now we should already been logged. If there is any problem go to the login instructions above\n",
-        "```\n",
-        "$ az ml component create --file flight_delays_training.yml\n",
-        "```\n",
-        "* It should display a JSON with informations of the component you just created"
-      ]
+        "Now we should already been logged. If there is any problem go to the login instructions\n",
+        "\n",
+        "**az ml component create --file flight_delays_training.yml --workspace-name romain-mlbox --resource-group rg-sbx-aiops**\n",
+        "\n",
+        "It should display a JSON with informations of the component you just created"
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 2.3 Updating our pipeline with the designer tool\n",
         "\n",
-        "* Open a new window of Azure ML Studio\n",
+        "Open a new window of Azure ML Studio\n",
         "\n",
-        "* Go to Pipelines on the left nav bar\n",
+        "Go to Pipelines and create a new pipeline drafts\n",
         "\n",
-        "* Select Pipeline Drafts and modify the pipeline that you created earlier (Click on it)\n",
+        "Select Custom using custom components\n",
         "\n",
-        "* You should now see the designer tool\n",
+        "You should now see the designer tool\n",
         "\n",
-        "* Select Component and drop train_delay_model component into the pipeline model\n",
+        "Select Component and drop analysis component into the pipeline model\n",
         "\n",
-        "* Now drag the Data output port into public_flight_delays input port from train_delay_model component\n",
+        "Now drag the Data output port into public_flight_delays input port from train_delay_model component\n",
         "\n",
-        "* Rename the pipeline with the name : **Analysis and Train Delay Flights**\n",
+        "Rename the pipeline with the name : **Analysis and Train Delay Flights**\n",
         "\n",
-        "* Click on the train_delay_model component, you should be able to see a parameters called num_trees which is used by our component when it trains our model with randomForest algorithm\n",
+        "Click on the train_delay_model component, you should be able to see a parameters called num_trees which is used by our component when it trains our model with randomForest algorithm\n",
         "\n",
         "\n",
-        "* It is time to press Submit to launch this pipeline and select the same experiment\n",
+        "It is time to press Submit to launch this pipeline\n",
         "\n",
-        "* Now you can see that analysis composent finished instantly because all the steps have been reused fron the precedent execution\n",
-        "\n",
-        "(It can take 5 up to 15 minutes to run)\n",
+        "Now you can see that analysis composent finished instantly because all the steps have been reused fron the precedent execution\n",
         "\n",
         "**Note that a .yml file can completely replace the design tool**\n",
         "\n",
@@ -1110,11 +1071,11 @@
         "* 31 columns\n",
         "\n",
         "-Images : Images that have been loaded during the execution"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
       "source": [
         "# 2. Create endpoint and deployment\n",
         "\n",
@@ -1123,28 +1084,14 @@
         "Endpoint is a server that runs into Azure CPU or GPU. You can request a prediction with REST API when it deploys\n",
         "\n",
         "## 2.1 Create endpoint"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "First we create an empty endpoint. This is like an empty shell"
-      ]
+      ],
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 31,
-      "metadata": {
-        "gather": {
-          "logged": 1669884951552
-        }
-      },
-      "outputs": [],
       "source": [
         "# Creating a local endpoint\n",
         "import datetime\n",
-        "import os\n",
         "from azure.ai.ml.entities import (\n",
         "    ManagedOnlineEndpoint,\n",
         "    ManagedOnlineDeployment,\n",
@@ -1153,90 +1100,221 @@
         "    CodeConfiguration,\n",
         ")\n",
         "\n",
-        "online_endpoint_name = \"EndpointDelayFlight\"\n",
+        "online_endpoint_name = \"endpoint-\" + datetime.datetime.now().strftime(\"%m%d%H%M%f\")\n",
         "\n",
         "# create an online endpoint\n",
         "endpoint = ManagedOnlineEndpoint(\n",
         "    name=online_endpoint_name,\n",
         "    description=\"this is an online endpoint\",\n",
         "    auth_mode=\"key\",\n",
-        "    tags={\"owner\": os.environ[\"owner\"]},\n",
+        "    tags={\"ama_owner\": \"romain.caret@amadeus.com\"},\n",
         ")"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "Let's create this endpoint into our workspace"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 30,
+      "metadata": {
+        "gather": {
+          "logged": 1669884951552
+        }
+      }
     },
     {
       "cell_type": "code",
-      "execution_count": 32,
+      "source": [
+        "ml_client.online_endpoints.begin_create_or_update(endpoint)"
+      ],
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "execution_count": 31,
+          "data": {
+            "text/plain": "<azure.core.polling._poller.LROPoller at 0x7f699c706610>"
+          },
+          "metadata": {}
+        }
+      ],
+      "execution_count": 31,
       "metadata": {
         "gather": {
           "logged": 1669884956013
         }
-      },
-      "outputs": [
-        {
-          "data": {
-            "text/plain": [
-              "<azure.core.polling._poller.LROPoller at 0x7f4f17c72ca0>"
-            ]
-          },
-          "execution_count": 32,
-          "metadata": {},
-          "output_type": "execute_result"
-        }
-      ],
-      "source": [
-        "ml_client.online_endpoints.begin_create_or_update(endpoint)"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "Now let's make a new directory for our script that will get the data, predict and return the prediction"
-      ]
+      }
     },
     {
       "cell_type": "code",
-      "execution_count": 34,
-      "metadata": {},
-      "outputs": [],
       "source": [
         "import os\n",
         "\n",
-        "score_dir = \"./score\"\n",
+        "score_dir = \"./model_scoring\"\n",
         "os.makedirs(score_dir, exist_ok=True)"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "Finally we put our score.py into our directory.\n",
-        "This score.py always have an init function that will be call only once when we deploy this script\n",
-        "Beside this function, we also have a run that is called everytime a prediction has to be made\n",
-        "Here we can see that init just loads the model and run gather the data, use the model to predict and returns the prediction. This is exactly what we expected from en endpoint deployment"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 26,
+      "metadata": {
+        "gather": {
+          "logged": 1669884992423
+        }
+      }
     },
     {
       "cell_type": "code",
-      "execution_count": 35,
-      "metadata": {},
+      "source": [
+        "import pyspark.sql.functions as F\n",
+        "from pyspark.sql.types import *\n",
+        "from pyspark.sql import functions as F\n",
+        "from pyspark.context import SparkContext\n",
+        "from pyspark.sql.session import SparkSession\n",
+        "from pyspark.ml.regression import RandomForestRegressor\n",
+        "\n",
+        "sc = SparkContext('local')\n",
+        "spark = SparkSession(sc)\n",
+        "\n"
+      ],
       "outputs": [
         {
-          "name": "stdout",
           "output_type": "stream",
-          "text": [
-            "Writing ./score/score.py\n"
-          ]
+          "name": "stderr",
+          "text": "SLF4J: Class path contains multiple SLF4J bindings.\nSLF4J: Found binding in [jar:file:/anaconda/envs/azureml_py38/lib/python3.8/site-packages/pyspark/jars/log4j-slf4j-impl-2.17.1.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: Found binding in [jar:file:/anaconda/envs/azureml_py38/lib/python3.8/site-packages/pyspark/jars/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]\nSLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.\nSLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]\nWARNING: An illegal reflective access operation has occurred\nWARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/anaconda/envs/azureml_py38/lib/python3.8/site-packages/pyspark/jars/spark-unsafe_2.12-3.1.3.jar) to constructor java.nio.DirectByteBuffer(long,int)\nWARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform\nWARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations\nWARNING: All illegal access operations will be denied in a future release\n"
         }
       ],
+      "execution_count": 4,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# DO NOT EXECUTE THIS CELL\n",
+        "\n",
+        "# The Model Name\n",
+        "model_name = \"model_delays_flight\"\n",
+        "\n",
+        "# get the uri of the model\n",
+        "model_uri = \"models:/\" + model_name + \"/latest\"\n",
+        "\n",
+        "rfModel = mlflow.pyfunc.load_model(model_uri)\n",
+        "\n",
+        "file = mlflow.pyfunc.get_model_dependencies(model_uri)\n",
+        "\n",
+        "print(file)"
+      ],
+      "outputs": [],
+      "execution_count": null,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import logging\n",
+        "import json\n",
+        "import numpy\n",
+        "import joblib\n",
+        "import mlflow\n",
+        "from pyspark.ml.feature import VectorAssembler\n",
+        "from pyspark.ml.linalg import Vectors\n",
+        "import pandas as pd\n",
+        "import pyspark.sql.functions as F\n",
+        "from pyspark.sql.types import *\n",
+        "from pyspark.sql import functions as F\n",
+        "from pyspark.context import SparkContext\n",
+        "from pyspark.sql.session import SparkSession\n",
+        "from pyspark.ml.regression import RandomForestRegressor\n",
+        "from pyspark import SparkConf, SparkContext\n",
+        "\n",
+        "\"\"\"\n",
+        "This function is called for every invocation of the endpoint to perform the actual scoring/prediction.\n",
+        "In the example we extract the data from the json input and call the model's predict()\n",
+        "method and return the result back\n",
+        "\n",
+        ":param raw_data: The input data in json format\n",
+        ":return: The prediction result in json format\n",
+        "\n",
+        "the format of the input data is:\n",
+        "\n",
+        "{\n",
+        "    \"data\": [\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 1,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 0\n",
+        "        },\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 2,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 1\n",
+        "        }\n",
+        "    ]\n",
+        "}\n",
+        "\"\"\"\n",
+        "conf = SparkConf().setAppName(\"appName\").setMaster(\"local\")\n",
+        "sc = SparkContext.getOrCreate(conf=conf)\n",
+        "spark = SparkSession(sc)\n",
+        "\n",
+        "data = [\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 6,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 27000\n",
+        "        },\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 6,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 33900\n",
+        "        }\n",
+        "    ]\n",
+        "\n",
+        "# Transform the data into a Spark DataFrame\n",
+        "df = spark.createDataFrame(data)\n",
+        "\n",
+        "# Create a VectorAssembler to transform the data into a vector\n",
+        "assembler = VectorAssembler(\n",
+        "    inputCols=[\"DAY_OF_WEEK\", \"SCHEDULED_ARRIVAL_sec\"],\n",
+        "    outputCol=\"features\")\n",
+        "\n",
+        "# Transform the data\n",
+        "df = assembler.transform(df)\n",
+        "\n",
+        "\n",
+        "model_name = \"model_delays_flight\"\n",
+        "\n",
+        "# get the uri of the model\n",
+        "model_uri = \"models:/\" + model_name + \"/latest\"\n",
+        "\n",
+        "model = mlflow.pyfunc.load_model(model_uri)\n",
+        "rfModel = model._model_impl.spark_model\n",
+        "\n",
+        "# Make the prediction\n",
+        "predictions = rfModel.transform(df)\n",
+        "\n",
+        "print(predictions.select(\"prediction\").toPandas())\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "{\"data\": [\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 6,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 27000\n",
+        "        },\n",
+        "        {\n",
+        "            \"DAY_OF_WEEK\": 6,\n",
+        "            \"SCHEDULED_ARRIVAL_sec\": 33900\n",
+        "        }\n",
+        "    ]}"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Ran into a deserialization error. Ignoring since this is failsafe deserialization\nTraceback (most recent call last):\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1509, in failsafe_deserialize\n    return self(target_obj, data, content_type=content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1375, in __call__\n    data = self._unpack_content(response_data, content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1543, in _unpack_content\n    raise ValueError(\"This pipeline didn't have the RawDeserializer policy; can't deserialize\")\nValueError: This pipeline didn't have the RawDeserializer policy; can't deserialize\nRan into a deserialization error. Ignoring since this is failsafe deserialization\nTraceback (most recent call last):\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1509, in failsafe_deserialize\n    return self(target_obj, data, content_type=content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1375, in __call__\n    data = self._unpack_content(response_data, content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1543, in _unpack_content\n    raise ValueError(\"This pipeline didn't have the RawDeserializer policy; can't deserialize\")\nValueError: This pipeline didn't have the RawDeserializer policy; can't deserialize\nRan into a deserialization error. Ignoring since this is failsafe deserialization\nTraceback (most recent call last):\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1509, in failsafe_deserialize\n    return self(target_obj, data, content_type=content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1375, in __call__\n    data = self._unpack_content(response_data, content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1543, in _unpack_content\n    raise ValueError(\"This pipeline didn't have the RawDeserializer policy; can't deserialize\")\nValueError: This pipeline didn't have the RawDeserializer policy; can't deserialize\nRan into a deserialization error. Ignoring since this is failsafe deserialization\nTraceback (most recent call last):\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1509, in failsafe_deserialize\n    return self(target_obj, data, content_type=content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1375, in __call__\n    data = self._unpack_content(response_data, content_type)\n  File \"/anaconda/envs/azureml_py38/lib/python3.8/site-packages/msrest/serialization.py\", line 1543, in _unpack_content\n    raise ValueError(\"This pipeline didn't have the RawDeserializer policy; can't deserialize\")\nValueError: This pipeline didn't have the RawDeserializer policy; can't deserialize\n2022/12/01 14:02:44 WARNING mlflow.pyfunc: Detected one or more mismatches between the model's dependencies and the current Python environment:\n - pyspark (current: 3.2.2, required: pyspark==3.1.3)\n - scipy (current: 1.5.3, required: scipy==1.9.3)\nTo fix the mismatches, call `mlflow.pyfunc.get_model_dependencies(model_uri)` to fetch the model's environment and install dependencies using the resulting environment file.\n2022/12/01 14:02:44 INFO mlflow.spark: File '/tmp/tmp9kgql2wp/model_delays_flight/sparkml' is already on DFS, copy is not necessary.\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "   prediction\n0   -3.015961\n1   -1.833719\n"
+        }
+      ],
+      "execution_count": 47,
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
       "source": [
         "%%writefile {score_dir}/score.py\n",
         "import os\n",
@@ -1320,24 +1398,19 @@
         "    \n",
         "    # transform the result into list\n",
         "    return result.select(\"prediction\").toPandas().to_json(orient=\"records\")"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "* We create an object that represent our online deployment"
-      ]
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Overwriting ./model_scoring/score.py\n"
+        }
+      ],
+      "execution_count": 54,
+      "metadata": {}
     },
     {
       "cell_type": "code",
-      "execution_count": 36,
-      "metadata": {
-        "gather": {
-          "logged": 1669885540933
-        }
-      },
-      "outputs": [],
       "source": [
         "from azureml.core import Workspace, Environment, Model\n",
         "\n",
@@ -1352,60 +1425,17 @@
         "    instance_type=\"Standard_DS2_v2\",\n",
         "    instance_count=1,\n",
         ")"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "* And now we deploy into our endpoint (Our endpoint has to be fully created to get a deployment)"
-      ]
+      ],
+      "outputs": [],
+      "execution_count": 56,
+      "metadata": {
+        "gather": {
+          "logged": 1669885540933
+        }
+      }
     },
     {
       "cell_type": "code",
-      "execution_count": 37,
-      "metadata": {
-        "gather": {
-          "logged": 1669885548669
-        }
-      },
-      "outputs": [
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Endpoint is not ready\n"
-          ]
-        },
-        {
-          "name": "stderr",
-          "output_type": "stream",
-          "text": [
-            "Check: endpoint EndpointDelayFlight exists\n"
-          ]
-        },
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "Endpoint is ready\n"
-          ]
-        },
-        {
-          "name": "stderr",
-          "output_type": "stream",
-          "text": [
-            "data_collector is not a known attribute of class <class 'azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3.ManagedOnlineDeployment'> and will be ignored\n"
-          ]
-        },
-        {
-          "name": "stdout",
-          "output_type": "stream",
-          "text": [
-            "..............................................................................."
-          ]
-        }
-      ],
       "source": [
         "import time\n",
         "# Check if the endpoint is ready\n",
@@ -1415,81 +1445,75 @@
         "        ml_client.online_deployments.begin_create_or_update(blue_deployment)\n",
         "        break\n",
         "    else:\n",
-        "        print(\"Endpoint is not ready, waiting...\")\n",
-        "        time.sleep(10)"
-      ]
+        "        print(\"Endpoint is not ready\")\n",
+        "        time.sleep(10)\n",
+        "\n"
+      ],
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "Check: endpoint endpoint-12011013248391 exists\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "Endpoint is ready\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "\u001b[32mUploading model_scoring (0.0 MBs): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2563/2563 [00:00<00:00, 229025.55it/s]\u001b[0m\n\u001b[39m\n\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "."
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": "data_collector is not a known attribute of class <class 'azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3.ManagedOnlineDeployment'> and will be ignored\n"
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": "..............................................................................."
+        }
+      ],
+      "execution_count": 57,
+      "metadata": {
+        "gather": {
+          "logged": 1669885548669
+        }
+      }
     },
     {
       "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "* To see if is completed, go on the nav bar on the left and select Endpoints\n",
-        "\n",
-        "<img src=\"images/endpoint.PNG\" width=\"850\" height=\"420\" />\n",
-        "\n",
-        "* Select the endpoint that you created\n",
-        "\n",
-        "* It should take 5 minutes to deploy blue wich is our deployment\n",
-        "\n",
-        "* When it is done, select Test on the top nav bar\n",
-        "\n",
-        "<img src=\"images/testEndpoint.PNG\" width=\"700\" height=\"420\" />\n",
-        "\n",
-        "* Now put this data into the test and press Test :\n",
-        "```\n",
-        " {\n",
-        "        \"data\": [\n",
-        "            {\n",
-        "                \"DAY_OF_WEEK\": 6,\n",
-        "                \"SCHEDULED_ARRIVAL_sec\": 39000\n",
-        "            },\n",
-        "            {\n",
-        "                \"DAY_OF_WEEK\": 2,\n",
-        "                \"SCHEDULED_ARRIVAL_sec\": 38000\n",
-        "            }\n",
-        "        ]\n",
-        "} \n",
-        "```"
-      ]
-    },
-    {
-      "cell_type": "markdown",
-      "metadata": {},
-      "source": [
-        "# 3. Congratulations\n",
-        "\n",
-        "You've used the Data Science Platform for an exploratory usecase where you analyse a data set and build a machine learning model to predict flight delays at arrival.\n",
-        "\n",
-        "**You are now**\n",
-        "\n",
-        "  ✔️ AzureML Grand Master\n",
-        "\n",
-        "**IMPORTANT =>**\n",
-        "\n",
-        "⚠️ Don't forget to shutdown/delete the compute that you created (compute instance + compute cluster [Compute on the left nav bar] + endpoint)"
-      ]
+      "source": [],
+      "metadata": {}
     }
   ],
   "metadata": {
     "kernel_info": {
-      "name": "python38-azureml"
-    },
-    "kernelspec": {
-      "display_name": "Python 3.8.5 ('azureml_py38')",
-      "language": "python",
       "name": "python3"
     },
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)"
+    },
     "language_info": {
+      "name": "python",
+      "version": "3.8.5",
+      "mimetype": "text/x-python",
       "codemirror_mode": {
         "name": "ipython",
         "version": 3
       },
-      "file_extension": ".py",
-      "mimetype": "text/x-python",
-      "name": "python",
-      "nbconvert_exporter": "python",
       "pygments_lexer": "ipython3",
-      "version": "3.8.5"
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
     },
     "nteract": {
       "version": "nteract-front-end@1.0.0"
