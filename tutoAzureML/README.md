@@ -22,8 +22,6 @@ If you are here, you are supposed to be login into Azure
 
 * Press Ressource and launch Studio
 
-<img src="https://postimg.cc/xNjb8MHF" width=600px>
-
 4. Go to compute on the nav bar (the nav bar might be hidden and you have to open completely to select the good icon) in the left, and start a Compute Instance. Create a machine CPU (lowest cost) called compute-ntbk-X (X is a random number because Azure does not allow 2 computes machine that has the same name in the same region)
 
 <img src="https://user-images.githubusercontent.com/26376087/204029909-5b3cf6bd-a64b-40ba-a40b-2246c3950f48.png" width=800px>
