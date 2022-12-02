@@ -1,6 +1,6 @@
 # Tuto Azure ML Flight Delays
 
-If you are here, you are supposed to be login into Azure
+Login into [AZURE](https://portal.azure.com/#home)
 
 1. Create a Ressource called Azure Machine Learning
 
